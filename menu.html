@@ -55,7 +55,7 @@
                     <div class="hidden sm:flex sm:space-x-8">
                         <a class="border-sky-50 text-white hover:text-yellow-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" href="beranda.html#">Beranda</a>
                         <a class="border-transparent text-white hover:text-yellow-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" href="menu.html#">Menu</a>
-                        <button id="cart-button" class="cart-badge bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full" data-count="0">🛒 Keranjang</button>
+                        <button id="cart-button" class="cart-badge bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full" data-count="0" aria-label="Keranjang Belanja">🛒 Keranjang</button>
                     </div>
                     <div class="-mr-2 flex sm:hidden">
                         <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
@@ -63,7 +63,8 @@
                             <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                             </svg>
-                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3 ```html
+.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
@@ -71,11 +72,11 @@
                 </div>
             </div>
             <!-- Mobile menu -->
-            <div class="sm:hidden " id="mobile-menu">
+            <div class="sm:hidden" id="mobile-menu">
                 <div class="space-y-1 px-2 pb-3">
                     <a class="border-sky-50 text-yellow-50 hover:text-yellow-200 block px-3 py-2 rounded-md text-base font-medium" href="index.html">Beranda</a>
                     <a class="border-transparent text-yellow-50 hover:text-yellow-200 block px-3 py-2 rounded-md text-base font-medium" href="menu.html#">Menu</a>
-                    <button id="cart-button-mobile" class="cart-badge bg-yellow-600 hover:bg-yellow-800 text-white px-4 py-2 rounded-full" data-count="0">🛒 Keranjang</button>
+                    <button id="cart-button-mobile" class="cart-badge bg-yellow-600 hover:bg-yellow-800 text-white px-4 py-2 rounded-full" data-count="0" aria-label="Keranjang Belanja">🛒 Keranjang</button>
                 </div>
             </div>
         </nav>
@@ -127,14 +128,14 @@
             createMenuCard(item) {
                 return `
                     <div class="menu-card bg-yellow-100 shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
-                        <img src="${item.image}" alt="${item.name}" class="w-full h-96 object-cover">
+                        <img src="${item.image}" alt="${item .name}" class="w-full h-96 object-cover">
                         <div class="p-4 bg-yellow-50">
                             <h3 class="text-xl font-bold text-yellow-800 mb-2">${item.name}</h3>
                             <p class="text-gray-600 mb-4">${item.description}</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-rose-700 font-bold">Rp${item.price.toLocaleString()}</span>
                                 <div class="flex items-center space-x-2">
- <button class="btn-kurang bg-green-500 text-white px-2 py-1 rounded">-</button>
+                                    <button class="btn-kurang bg-green-500 text-white px-2 py-1 rounded">-</button>
                                     <input type="number" class="item-quantity w-12 text-center border rounded" value="0" min="0" readonly>
                                     <button class="btn-tambah bg-green-500 text-white px-2 py-1 rounded">+</button>
                                 </div>
@@ -209,24 +210,16 @@
 
             showAddToCartNotification(item) {
                 const isMobile = window.innerWidth < 768; // Check if the screen width is less than 768px
-                if (isMobile) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Ditambahkan ke Keranjang',
-                        text: `${item.name} (${item.quantity}) telah ditambahkan`,
-                        toast: true,
-                        position: 'top-end',
-                        width: '500px',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Ditambahkan ke Keranjang',
-                        text: `${item.name} (${item.quantity}) telah ditambahkan`
-                    });
-                }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Ditambahkan ke Keranjang',
+                    text: `${item.name} (${item.quantity}) telah ditambahkan`,
+                    toast: isMobile,
+                    position: isMobile ? 'top-end' : undefined,
+                    width: isMobile ? '500px' : undefined,
+                    showConfirmButton: !isMobile,
+                    timer: isMobile ? 1500 : undefined
+                });
             }
 
             saveCart() {
@@ -287,6 +280,10 @@
                     width: '90%', // Ubah lebar untuk tampilan mobile
                     didRender: () => {
                         this.setupCartItemActions();
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.checkout();
                     }
                 });
             }
@@ -369,12 +366,13 @@
                             <button class="btn-ubah-qty bg-green-500 text-white px-2 text-sm py-1 rounded" 
                                     data-id="${item.id}" data-change="-1">-</button>
                             <span>${item.quantity}</span>
-                            <button class="btn-ubah-qty bg-green-500 text-white px-2 text-sm py-1 rounded" 
+                            <button
+                            class="btn-ubah-qty bg-green-500 text-white px-2 text-sm py-1 rounded" 
                                     data-id="${item.id}" data-change="1">+</button>
                         </div>
                         <span class="text-lg font-bold ml-4">Rp${(item.price * item.quantity).toLocaleString()}</span>
                         <button class="btn-hapus-item bg-red-500 text-white text-xs px-2 py-1 rounded ml-1" 
-                                data-id="${item.id}"> Hapus</button>
+                                data-id="${item.id}">Hapus</button>
                     </div>
                 `).join('');
 
@@ -410,6 +408,10 @@
                     didRender: () => {
                         this.setupPaymentMethodListeners();
                     }
+                }).then((result) => {
+                    if (result.isDismissed) {
+                        return; // Jika dibatalkan, tidak melakukan apa-apa
+                    }
                 });
             }
 
@@ -426,6 +428,11 @@
                                 ${method.label}
                             </button>
                         `).join('')}
+                        <div class="mt-4">
+                            <input type="text" id="customer-name" placeholder="Nama" class="border p-2 w-full">
+                            <input type="text" id="customer-class" placeholder="Kelas" class="border p-2 w-full mt-2">
+                            <input type="text" id="customer-major" placeholder="Jurusan" class="border p-2 w-full mt-2">
+                        </div>
                     </div>
                 `;
             }
@@ -434,19 +441,32 @@
                 document.querySelectorAll('.payment-method').forEach(button => {
                     button.addEventListener('click', (e) => {
                         const paymentMethod = e.target.dataset.method;
-                        this.processPayment(paymentMethod);
+                        const name = document.getElementById('customer-name').value;
+                        const className = document.getElementById('customer-class').value;
+                        const major = document.getElementById('customer-major').value;
+
+                        if (!name || !className || !major) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Data Tidak Lengkap',
+                                text: 'Silakan isi semua informasi yang diperlukan.'
+                            });
+                            return; // Tidak melanjutkan jika informasi tidak lengkap
+                        }
+
+                        this.processPayment(paymentMethod, name, className, major);
                     });
                 });
             }
 
-            processPayment(method) {
+            processPayment(method, name, className, major) {
                 const pesananItems = this.items.map(item => 
                     `${item.name} (${item.quantity}x) - Rp${(item.price * item.quantity).toLocaleString()}`
                 ).join('%0A');
                 
                 const totalHarga = this.calculateTotal();
                 
-                let paymentMessage = `Metode Pembayaran: ${this.getPaymentMethodName(method)}%0A%0APesanan:%0A${pesananItems}%0A%0ATotal: Rp${totalHarga.toLocaleString()}%0A%0ANama: %0A%0AKelas: %0A%0AJurusan: `;
+                let paymentMessage = `Metode Pembayaran: ${this.getPaymentMethodName(method)}%0A%0APesanan:%0A${pesananItems}%0A%0ATotal: Rp${totalHarga.toLocaleString()}%0A%0ANama: ${name}%0A%0AKelas: ${className}%0A%0AJurusan: ${major}`;
                 
                 switch(method) {
                     case 'cod':
